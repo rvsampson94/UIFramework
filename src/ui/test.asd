@@ -1,3 +1,1 @@
-hlayout:
-  button("OK"):
-  button("Cancel"):
+button("Click Me"):

@@ -1,2 +1,8 @@
 include("src/UIFramework.jl")
-UIFramework.main()
+if length(ARGS) != 1
+    exit()
+elseif ARGS[1] == "run"
+    UIFramework.run()
+elseif ARGS[1] == "parse"
+    UIFramework.parse()
+end
