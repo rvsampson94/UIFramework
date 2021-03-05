@@ -1,22 +1,24 @@
 module Tokenizer
 
     TokenDefinitions = (
-        (r"[a-zA-Z]+", :Tag),
-        (r"\(", :LeftParen),
-        (r"\)", :RightParen),
-        (r":", :TagClose),
-        (r"\".*\"", :StringLiteral),
-        (r".*", :InvalidToken)
+        (r"[\r?\n]+"s, :Newline),
+        (r"[\t ]+"s, :Whitespace),
+        (r"[a-zA-Z]+"s, :Tag),
+        (r"\("s, :LeftParen),
+        (r"\)"s, :RightParen),
+        (r":"s, :TagClose),
+        (r"\".*\""s, :StringLiteral),
+        (r".*"s, :InvalidToken), # MUST BE LAST
     )
 
     mutable struct Token
-        start::Int32
-        _end::Int32
-        type::Symbol
+        start::Int32 # Starting index of token inclusive
+        _end::Int32 # Ending index of token inclusive
+        type::Symbol # Token type
     end
 
     function print(token::Token)
-        println(program[token.start : token._end], ":", token.type)
+        println(":", token.type)
     end
 
     cursor = 1
@@ -41,20 +43,21 @@ module Tokenizer
             return nothing
         end
         
+        token = Token(cursor, cursor, :InvalidToken)
+        substring = ""
         type = :InvalidToken
-        token = Token(cursor, cursor, type)
         while true
-            substring = program[token.start:cursor]
             prevType = type
-            type = getTokenType(substring)
-            if type == :InvalidToken && prevType != :InvalidToken
+            try
+                substring = program[token.start:cursor]
+                type = getTokenType(substring)
+            catch e
+                substring = program[token.start:cursor - 1]
+                type = :InvalidToken
+            end
+            if (type == :InvalidToken && prevType != :InvalidToken) || (cursor - 1 >= programLength)
                 token.type = prevType
                 token._end = cursor - 1
-                return token
-            elseif cursor + 1 > programLength
-                token.type = type
-                token._end = cursor
-                cursor += 1
                 return token
             else
                 global cursor += 1
