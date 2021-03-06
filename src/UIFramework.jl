@@ -1,15 +1,8 @@
 module UIFramework
-    # using Gtk
-    # using Gtk.GConstants
 
+    include("./Parser.jl")
     function run()
-        # dumb_parse()
-        # global window = GtkWindow("My Title", 600, 400)
-
-        # showall(window)
-        # if !isinteractive()
-        #     Gtk.waitforsignal(window, :destroy)
-        # end
+        
     end
 
     include("./Tokenizer.jl")

@@ -8,11 +8,12 @@ function get(key)
 end
 function set(key, val)
     data[key] = val
-    if !haskey(bindings, key)
-        update(key)
+    if haskey(bindings, key)
+        update(key, val)
+    end
 end
-function update(key1)
-    for key2 in data[key1]
+function update(key1, val)
+    for key2 in bindings[key1]
         set(key2, val)
     end
 end
@@ -21,4 +22,6 @@ function bind(key1, key2)
         bindings[key1] = []
     end
     push!(bindings[key1], key2)
+end
+
 end
