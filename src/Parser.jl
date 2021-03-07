@@ -11,16 +11,20 @@ function __init__()
                     traverse(arg)
                 else
                     push!(symbols, arg.args[1])
-                    arg.head = :call
-                    arg.args = [
+                    expr.args[i] = Expr(
+                        :call,
                         Expr(:., :Bind, QuoteNode(:set)),
                         QuoteNode(arg.args[1]),
                         arg.args[2]
-                    ]
+                    )
+                    traverse(arg)
                 end
             elseif arg in symbols
-                sym = arg
-                expr.args[i] = Expr(:call, Expr(:., :Bind, QuoteNode(:get)), QuoteNode(sym))
+                expr.args[i] = Expr(
+                    :call,
+                    Expr(:., :Bind, QuoteNode(:get)),
+                    QuoteNode(arg)
+                )
             end
         end
     end
